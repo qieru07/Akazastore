@@ -4,7 +4,7 @@
     "api/index.php": {
       "runtime": "vercel-php@0.7.4"
     },
-    "akaza_topup/**/*.php": {
+    "api/akaza_topup/**/*.php": {
       "runtime": "vercel-php@0.7.4"
     }
   },
@@ -15,15 +15,15 @@
     },
     {
       "src": "/akaza_topup/(.*\\.php)$",
-      "dest": "/akaza_topup/$1"
+      "dest": "/api/akaza_topup/$1"
     },
     {
       "src": "/akaza_topup$",
-      "dest": "/akaza_topup/index.php"
+      "dest": "/api/akaza_topup/index.php"
     },
     {
       "src": "/akaza_topup/(.*)",
-      "dest": "/akaza_topup/index.php"
+      "dest": "/api/akaza_topup/index.php"
     },
     {
       "src": "/build/(.*)",
