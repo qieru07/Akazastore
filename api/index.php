@@ -9,6 +9,7 @@ error_reporting(E_ALL);
 register_shutdown_function(function() {
     $error = error_get_last();
     if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+        http_response_code(500);
         echo "<div style='background-color: #f8d7da; color: #721c24; padding: 20px; border: 1px solid #f5c6cb; font-family: monospace;'>";
         echo "<h1>PHP Shutdown Fatal Error:</h1>";
         echo "<p><strong>Message:</strong> " . htmlspecialchars($error['message']) . "</p>";
@@ -37,6 +38,7 @@ try {
     // Forward request to Laravel's main index.php
     require __DIR__ . '/../public/index.php';
 } catch (\Throwable $e) {
+    http_response_code(500);
     echo "<div style='background-color: #f8d7da; color: #721c24; padding: 20px; border: 1px solid #f5c6cb; font-family: monospace;'>";
     echo "<h1>PHP Exception Caught:</h1>";
     echo "<p><strong>Message:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
@@ -44,6 +46,6 @@ try {
     echo "<h3>Stack trace:</h3>";
     echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
     echo "</div>";
-    exit(1);
+    exit(0);
 }
 
