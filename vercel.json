@@ -1,0 +1,53 @@
+{
+  "version": 2,
+  "functions": {
+    "api/index.php": {
+      "runtime": "vercel-php@0.7.4"
+    },
+    "akaza_topup/**/*.php": {
+      "runtime": "vercel-php@0.7.4"
+    }
+  },
+  "routes": [
+    {
+      "src": "/akaza_topup/(.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|txt))$",
+      "dest": "/akaza_topup/$1"
+    },
+    {
+      "src": "/akaza_topup/(.*\\.php)$",
+      "dest": "/akaza_topup/$1"
+    },
+    {
+      "src": "/akaza_topup$",
+      "dest": "/akaza_topup/index.php"
+    },
+    {
+      "src": "/akaza_topup/(.*)",
+      "dest": "/akaza_topup/index.php"
+    },
+    {
+      "src": "/build/(.*)",
+      "dest": "/public/build/$1"
+    },
+    {
+      "src": "/images/(.*)",
+      "dest": "/public/images/$1"
+    },
+    {
+      "src": "/video/(.*)",
+      "dest": "/public/video/$1"
+    },
+    {
+      "src": "/videos/(.*)",
+      "dest": "/public/videos/$1"
+    },
+    {
+      "src": "/(favicon\\.ico|robots\\.txt)$",
+      "dest": "/public/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.php"
+    }
+  ]
+}
