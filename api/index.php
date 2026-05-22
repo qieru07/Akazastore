@@ -26,6 +26,8 @@ $envCacheVars = [
     'APP_ROUTES_CACHE' => '/tmp/storage/bootstrap/cache/routes-v7.php',
     'APP_EVENTS_CACHE' => '/tmp/storage/bootstrap/cache/events.php',
     'VIEW_COMPILED_PATH' => '/tmp/storage/framework/views',
+    'SESSION_DRIVER' => 'cookie',
+    'CACHE_STORE' => 'array',
 ];
 
 foreach ($envCacheVars as $key => $value) {
