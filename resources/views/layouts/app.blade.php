@@ -63,12 +63,12 @@
                                 <button class="flex items-center gap-3 px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-xl text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150 group">
                                     <div class="flex flex-col text-right">
                                         <span class="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Administrator</span>
-                                        <div class="text-gray-800 dark:text-gray-200 font-bold">{{ Auth::user()->name }}</div>
+                                        <div class="text-gray-800 dark:text-gray-200 font-bold">{{ Auth::user()?->name ?? 'Guest' }}</div>
                                     </div>
                                     
                                     <div class="relative">
                                         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center text-white font-black shadow-md group-hover:scale-110 transition-transform">
-                                            {{ substr(Auth::user()->name, 0, 1) }}
+                                            {{ substr(Auth::user()?->name ?? 'Guest', 0, 1) }}
                                         </div>
                                         <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
                                     </div>
@@ -78,7 +78,7 @@
                             <x-slot name="content">
                                 <div class="px-4 py-2 border-b border-gray-100 dark:border-gray-700 mb-1">
                                     <div class="text-xs text-gray-400 uppercase font-bold tracking-tighter">Login Sebagai</div>
-                                    <div class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{{ Auth::user()->email }}</div>
+                                    <div class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{{ Auth::user()?->email ?? '' }}</div>
                                 </div>
 
                                 <x-dropdown-link :href="route('profile.edit')" class="flex items-center gap-2">

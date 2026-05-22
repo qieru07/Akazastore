@@ -19,17 +19,17 @@ Route::get('/game/{slug}', [GameController::class, 'show'])->name('game.show');
         })->middleware(['auth', 'verified'])->name('dashboard');
         
         Route::middleware('auth')->group(function () {
-            Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-            Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-            Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-            });
-            
-Route::resource('banners', BannerController::class);
-Route::resource('games', GameController::class);
-Route::resource('products', ProductController::class);
-Route::resource('payment-methods', PaymentMethodController::class);
-Route::resource('transactions', TransactionController::class);
-Route::patch('transactions/{transaction}/status', [TransactionController::class, 'updateStatus'])->name('transactions.updateStatus');
-Route::post('transactions/clear-completed', [TransactionController::class, 'clearCompleted'])->name('transactions.clearCompleted');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    Route::resource('banners', BannerController::class);
+    Route::resource('games', GameController::class);
+    Route::resource('products', ProductController::class);
+    Route::resource('payment-methods', PaymentMethodController::class);
+    Route::resource('transactions', TransactionController::class);
+    Route::patch('transactions/{transaction}/status', [TransactionController::class, 'updateStatus'])->name('transactions.updateStatus');
+    Route::post('transactions/clear-completed', [TransactionController::class, 'clearCompleted'])->name('transactions.clearCompleted');
+});
 
 require __DIR__.'/auth.php';
