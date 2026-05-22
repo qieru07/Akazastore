@@ -1,21 +1,33 @@
 <?php
+require_once __DIR__ . '/koneksi.php';
 require_once __DIR__ . '/helper.php';
 
-$api_base = get_api_base_url();
-$url = $api_base . "/games";
-$response = @file_get_contents($url);
-$result = json_decode($response, true);
-
 $games = [];
-if ($result && isset($result['data'])) {
-    $games = $result['data'];
+$games_query = mysqli_query($conn, "SELECT * FROM games WHERE status = 1");
+if ($games_query) {
+    while ($row = mysqli_fetch_assoc($games_query)) {
+        $thumbnail = $row['thumbnail'];
+        if (str_starts_with($thumbnail, 'http')) {
+            $row['thumbnail_url'] = $thumbnail;
+        } else {
+            $row['thumbnail_url'] = get_image_base_url() . '/games/' . $thumbnail;
+        }
+        $row['slug'] = $row['slug'] ?? 'item';
+        $games[] = $row;
+    }
 }
+
 session_start(); 
-// Ambil data banner dari API
-$banner_url = $api_base . "/banners";
-$banner_res = @file_get_contents($banner_url);
-$banner_data = json_decode($banner_res, true);
-$banners = $banner_data['data'] ?? [];
+
+$banners = [];
+$banners_query = mysqli_query($conn, "SELECT * FROM banners WHERE status = 1");
+if ($banners_query) {
+    while ($row = mysqli_fetch_assoc($banners_query)) {
+        $row['image_url'] = $row['image'] ? get_image_base_url() . '/banners/' . $row['image'] : null;
+        $row['video_url'] = $row['video_url'] ? get_video_base_url() . '/banners/' . $row['video_url'] : null;
+        $banners[] = $row;
+    }
+}
 ?>
 
 <!DOCTYPE html>

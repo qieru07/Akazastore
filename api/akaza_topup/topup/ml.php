@@ -5,19 +5,9 @@ $game_img = "../asset/img/Mobile Legend.jpg"; // Default fallback
 
 if ($game_id) {
     require_once __DIR__ . '/../helper.php';
-    $api_url = get_api_base_url() . "/games";
-    $api_res = @file_get_contents($api_url);
-    $api_data = json_decode($api_res, true);
-    
-    if ($api_data && isset($api_data['data'])) {
-        foreach ($api_data['data'] as $g) {
-            if ($g['id'] == $game_id) {
-                $game_name = $g['name'];
-                $game_img = $g['thumbnail_url'];
-                break;
-            }
-        }
-    }
+    $details = get_game_details($game_id, $game_name, $game_img);
+    $game_name = $details['name'];
+    $game_img = $details['image'];
 }
 ?>
 <!DOCTYPE html>
