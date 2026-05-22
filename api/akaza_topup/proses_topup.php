@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "koneksi.php";
+include __DIR__ . "/koneksi.php";
 
 $username = $_SESSION['username'] ?? 'Guest';
 $user_id = $_POST['user_id'];

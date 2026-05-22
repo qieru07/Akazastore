@@ -1,6 +1,6 @@
 <?php
-include "koneksi.php";
-require_once "helper.php";
+include __DIR__ . "/koneksi.php";
+require_once __DIR__ . "/helper.php";
 
 $id = $_GET['id'] ?? null;
 

@@ -1,5 +1,5 @@
 <?php
-include "koneksi.php";
+include __DIR__ . "/koneksi.php";
 
 $id = $_GET['id'] ?? null;
 $result = null;

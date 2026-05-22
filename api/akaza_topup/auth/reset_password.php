@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../koneksi.php";
+include __DIR__ . "/../koneksi.php";
 
 $message = '';
 $token = $_GET['token'] ?? '';
