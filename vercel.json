@@ -18,15 +18,15 @@
   ],
   "rewrites": [
     {
-      "source": "/akaza_topup/(.*\\.php)$",
-      "destination": "/api/akaza_topup/$1"
+      "source": "/akaza_topup/:path(.*\\.php)",
+      "destination": "/api/akaza_topup/:path"
     },
     {
-      "source": "/akaza_topup/((?!.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|txt|json|webp|mp4|webm)).*)",
+      "source": "/akaza_topup/((?!.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|txt|json|webp|mp4|webm|php)).*)",
       "destination": "/api/akaza_topup/index.php"
     },
     {
-      "source": "/((?!api/|.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|txt|json|webp|mp4|webm)).*)",
+      "source": "/((?!api/|.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|txt|json|webp|mp4|webm|php)).*)",
       "destination": "/api/index.php"
     }
   ]
