@@ -18,6 +18,22 @@ register_shutdown_function(function() {
     }
 });
 
+// Configure cache and compiled paths for Laravel to run in Vercel's read-only environment
+$envCacheVars = [
+    'APP_SERVICES_CACHE' => '/tmp/storage/bootstrap/cache/services.php',
+    'APP_PACKAGES_CACHE' => '/tmp/storage/bootstrap/cache/packages.php',
+    'APP_CONFIG_CACHE' => '/tmp/storage/bootstrap/cache/config.php',
+    'APP_ROUTES_CACHE' => '/tmp/storage/bootstrap/cache/routes-v7.php',
+    'APP_EVENTS_CACHE' => '/tmp/storage/bootstrap/cache/events.php',
+    'VIEW_COMPILED_PATH' => '/tmp/storage/framework/views',
+];
+
+foreach ($envCacheVars as $key => $value) {
+    putenv("{$key}={$value}");
+    $_ENV[$key] = $value;
+    $_SERVER[$key] = $value;
+}
+
 // Vercel serverless environment is read-only except for /tmp.
 // We dynamically create directories in /tmp for Laravel's compilation, sessions, and cache.
 $storagePaths = [
@@ -26,6 +42,7 @@ $storagePaths = [
     '/tmp/storage/framework/views',
     '/tmp/storage/framework/testing',
     '/tmp/storage/logs',
+    '/tmp/storage/bootstrap/cache',
 ];
 
 try {
@@ -48,4 +65,5 @@ try {
     echo "</div>";
     exit(0);
 }
+
 
