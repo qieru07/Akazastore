@@ -21,7 +21,7 @@
         </script>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 transition-colors duration-300" x-data="{ sidebarOpen: true }">
+    <body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 transition-colors duration-300" x-data="{ sidebarOpen: window.innerWidth >= 1024 }">
         <div class="flex h-screen overflow-hidden">
             <!-- Sidebar Overlay (Mobile) -->
             <div x-show="sidebarOpen" 

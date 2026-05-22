@@ -9,7 +9,7 @@
     <div class="flex items-center px-6 h-20 border-b border-gray-100 dark:border-gray-700/50">
         <a href="{{ route('dashboard') }}" class="flex items-center gap-3 group">
             <div class="relative">
-                <img src="http://localhost/akaza_topup/asset/img/akazachibi.png" class="w-10 h-10 rounded-xl shadow-lg transition-transform group-hover:scale-110" alt="Logo">
+                <img src="{{ asset('akaza_topup/asset/img/akazachibi.png') }}" class="w-10 h-10 rounded-xl shadow-lg transition-transform group-hover:scale-110" alt="Logo">
                 <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
             </div>
             <div class="flex flex-col">
