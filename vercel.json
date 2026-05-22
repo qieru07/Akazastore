@@ -22,11 +22,11 @@
       "destination": "/api/akaza_topup/$1"
     },
     {
-      "source": "/akaza_topup/(.*)",
+      "source": "/akaza_topup/((?!.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|txt|json|webp|mp4|webm)).*)",
       "destination": "/api/akaza_topup/index.php"
     },
     {
-      "source": "/((?!api/).*)",
+      "source": "/((?!api/|.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|txt|json|webp|mp4|webm)).*)",
       "destination": "/api/index.php"
     }
   ]
