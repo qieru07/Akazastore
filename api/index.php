@@ -54,8 +54,17 @@ try {
         }
     }
 
-    // Forward request to Laravel's main index.php
-    require __DIR__ . '/../public/index.php';
+    // Bootstrap Laravel and handle the request...
+    define('LARAVEL_START', microtime(true));
+
+    if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+        require $maintenance;
+    }
+
+    /** @var \Illuminate\Foundation\Application $app */
+    $app = require_once __DIR__.'/../bootstrap/app.php';
+
+    $app->handleRequest(\Illuminate\Http\Request::capture());
 } catch (\Throwable $e) {
     http_response_code(500);
     echo "<div style='background-color: #f8d7da; color: #721c24; padding: 20px; border: 1px solid #f5c6cb; font-family: monospace;'>";
