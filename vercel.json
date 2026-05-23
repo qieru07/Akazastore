@@ -21,7 +21,7 @@
       "dest": "/api/akaza_topup/index.php"
     },
     {
-      "src": "^/((?!api/|.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|txt|json|webp|mp4|webm|php)).*)$",
+      "src": "^/((?!.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|txt|json|webp|mp4|webm|php)).*)$",
       "dest": "/api/index.php"
     }
   ]

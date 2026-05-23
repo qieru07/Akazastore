@@ -54,6 +54,9 @@ try {
         }
     }
 
+    // Register the Composer autoloader...
+    require __DIR__.'/../vendor/autoload.php';
+
     // Bootstrap Laravel and handle the request...
     define('LARAVEL_START', microtime(true));
 
@@ -62,6 +65,8 @@ try {
     }
 
     /** @var \Illuminate\Foundation\Application $app */
+    $_SERVER['SCRIPT_NAME'] = '/index.php';
+    $_SERVER['PHP_SELF'] = '/index.php';
     $app = require_once __DIR__.'/../bootstrap/app.php';
 
     $app->handleRequest(\Illuminate\Http\Request::capture());
