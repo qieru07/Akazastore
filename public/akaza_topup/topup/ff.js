@@ -86,12 +86,53 @@ function createItemCard(item, container, icon = "💎") {
     </div>
   `;
 
+  // Info button click handler
+  const infoBtn = card.querySelector('.ic-info');
+  if (infoBtn) {
+    infoBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openInfoModal(
+        'Detail Produk',
+        `Nama Produk: ${item.name}\n` +
+        `Estimasi Harga: ${formatRp(item.price)}\n` +
+        `Estimasi Pengiriman: ${badgeText}\n\n` +
+        `Produk ini akan langsung diproses ke akun game kamu secara otomatis dan aman setelah pembayaran diverifikasi.`
+      );
+    });
+  }
+
   card.addEventListener('click', (e) => {
     if (e.target.closest('.ic-info')) return;
-    selectItem(card, item);
+    if (selectedProduct && selectedProduct.name === item.name) {
+      unselectItem();
+    } else {
+      selectItem(card, item);
+    }
   });
 
   container.appendChild(card);
+}
+
+function unselectItem() {
+  document.querySelectorAll('.item-card').forEach(c => c.classList.remove('active'));
+  selectedProduct = null;
+  
+  const itemInput = document.getElementById('itemInput');
+  if (itemInput) itemInput.value = '';
+  if (nominalInput) nominalInput.value = '';
+
+  const orderEmpty = document.getElementById('orderEmpty');
+  const orderDetail = document.getElementById('orderDetail');
+  
+  if (orderEmpty && orderDetail) {
+    orderEmpty.style.display = 'block';
+    orderDetail.style.display = 'none';
+  }
+
+  const msoBar = document.getElementById('mobileOrderBar');
+  if (msoBar) {
+    msoBar.classList.remove('show');
+  }
 }
 
 function selectItem(card, item) {
