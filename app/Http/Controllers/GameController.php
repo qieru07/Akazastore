@@ -25,7 +25,7 @@ class GameController extends Controller
             'name' => 'required',
             'slug' => 'required|string',
             'thumbnail' => 'required_without:thumbnail_url|nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'thumbnail_url' => 'required_without:thumbnail|nullable|url',
+            'thumbnail_url' => 'required_without:thumbnail|nullable|string',
             'video' => 'nullable|mimes:mp4|max:20480', // Max 20MB
         ]);
 
@@ -74,7 +74,7 @@ class GameController extends Controller
             'name' => 'required',
             'slug' => 'required|string',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'thumbnail_url' => 'nullable|url',
+            'thumbnail_url' => 'nullable|string',
         ]);
 
         $game->name = $request->name;
