@@ -54,7 +54,7 @@ if ($game_id) {
             <div class="step-card">
               <div class="step-row-inputs">
                 <div class="field-group">
-                  <label class="field-label">ID <span class="info-icon" title="Masukkan User ID game kamu">ⓘ</span></label>
+                  <label class="field-label">ID <span class="info-icon" onclick="openInfoModal('User ID', 'Untuk menemukan User ID kamu, buka game Mobile Legends lalu klik ikon profil di pojok kiri atas. User ID tertera di bawah nama IGN kamu. Contoh format: 123456789')">ⓘ</span></label>
                   <input type="number" name="user_id" id="userid" placeholder="Masukkan ID" required class="field-input" />
                 </div>
                 <div class="field-group">
@@ -65,7 +65,7 @@ if ($game_id) {
               
               <div class="step-row-inputs" style="margin-top: 15px;">
                 <div class="field-group">
-                  <label class="field-label">Nomor WhatsApp <span class="info-icon" title="Untuk konfirmasi pesanan">ⓘ</span></label>
+                  <label class="field-label">Nomor WhatsApp <span class="info-icon" onclick="openInfoModal('Nomor WhatsApp', 'Masukkan nomor WhatsApp aktif kamu untuk menerima bukti pembayaran dan konfirmasi pesanan. Pastikan nomor dalam format yang benar, contoh: 08123456789')">ⓘ</span></label>
                   <input type="tel" name="whatsapp" id="whatsapp" placeholder="08123xxx" required class="field-input" />
                 </div>
                 <div class="field-group">
@@ -233,6 +233,39 @@ if ($game_id) {
   </div>
   <button type="button" class="order-btn" id="msoBtnTrigger">Pesan Sekarang</button>
 </div>
+
+<!-- Info Modal -->
+<div class="info-modal-overlay" id="infoModal">
+  <div class="info-modal-box">
+    <div class="info-modal-header">
+      <div class="info-modal-icon">ⓘ</div>
+      <h3 id="infoModalTitle">Informasi</h3>
+      <button class="info-modal-close" id="infoModalClose" aria-label="Tutup">✕</button>
+    </div>
+    <div class="info-modal-body">
+      <p id="infoModalText"></p>
+    </div>
+    <div class="info-modal-footer">
+      <button class="info-modal-btn" id="infoModalOk">Mengerti</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openInfoModal(title, text) {
+  document.getElementById('infoModalTitle').textContent = title;
+  document.getElementById('infoModalText').textContent = text;
+  document.getElementById('infoModal').classList.add('active');
+}
+function closeInfoModal() {
+  document.getElementById('infoModal').classList.remove('active');
+}
+document.getElementById('infoModalClose').addEventListener('click', closeInfoModal);
+document.getElementById('infoModalOk').addEventListener('click', closeInfoModal);
+document.getElementById('infoModal').addEventListener('click', function(e) {
+  if (e.target === this) closeInfoModal();
+});
+</script>
 
 </body>
 <script src="ml.js"></script>
