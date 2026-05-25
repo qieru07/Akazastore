@@ -12,6 +12,14 @@
       "dest": "/akaza_topup/asset/img/$1"
     },
     {
+      "src": "^/akaza_topup/topup/rb\\.php$",
+      "dest": "/api/akaza_topup/topup/Rb.php"
+    },
+    {
+      "src": "^/akaza_topup/topup/roblox\\.php$",
+      "dest": "/api/akaza_topup/topup/Rb.php"
+    },
+    {
       "src": "^/akaza_topup$",
       "status": 308,
       "headers": { "Location": "/akaza_topup/" }
