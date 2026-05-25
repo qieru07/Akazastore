@@ -874,6 +874,10 @@ a {
     display: none
   }
 
+  .theme-toggle {
+    margin-left: auto;
+  }
+
   .mobile-nav {
     display: block
   }

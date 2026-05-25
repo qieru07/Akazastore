@@ -181,7 +181,7 @@ if ($banners_query) {
               <?php foreach ($games as $game): ?>
                   <?php $slug = $game['slug'] ?? 'item'; ?>
                   <a href="topup/<?= $slug; ?>.php?id=<?= $game['id']; ?>" class="prod-card">
-                      <img src="<?= $game['thumbnail_url']; ?>" alt="<?= $game['name']; ?>" onerror="this.src='asset/placeholder-rect.png'"/>
+                      <img src="<?= $game['thumbnail_url']; ?>" alt="<?= $game['name']; ?>" onerror="this.src='asset/img/akazachibi.png'"/>
                       <div class="prod-body">
                           <h3><?= $game['name']; ?></h3>
                           <p class="muted">Top-up <?= $game['name']; ?> resmi dan instan.</p>
