@@ -63,13 +63,13 @@
 
     <!-- Header / Banner -->
     <div class="relative h-[300px] md:h-[400px] w-full overflow-hidden pt-16">
-        <img src="{{ asset('images/games/'.$game->thumbnail) }}" class="w-full h-full object-cover blur-sm scale-110 opacity-30 dark:opacity-20" alt="">
+        <img src="{{ str_starts_with($game->thumbnail, 'http') ? $game->thumbnail : asset('images/games/'.$game->thumbnail) }}" class="w-full h-full object-cover blur-sm scale-110 opacity-30 dark:opacity-20" alt="">
         <div class="absolute inset-0 bg-gradient-to-b from-transparent via-slate-50 dark:via-dark-900 to-slate-50 dark:to-dark-900"></div>
         
         <div class="absolute inset-0 flex items-center justify-center pt-20">
             <div class="max-w-7xl mx-auto px-4 w-full flex flex-col md:flex-row items-center gap-8">
                 <div class="w-48 h-64 md:w-56 md:h-72 rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-dark-800 rotate-[-2deg]">
-                    <img src="{{ asset('images/games/'.$game->thumbnail) }}" class="w-full h-full object-cover" alt="{{ $game->name }}">
+                    <img src="{{ str_starts_with($game->thumbnail, 'http') ? $game->thumbnail : asset('images/games/'.$game->thumbnail) }}" class="w-full h-full object-cover" alt="{{ $game->name }}">
                 </div>
                 <div class="text-center md:text-left">
                     <h1 class="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight mb-2">{{ $game->name }}</h1>

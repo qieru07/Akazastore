@@ -24,7 +24,8 @@ class GameController extends Controller
         $request->validate([
             'name' => 'required',
             'slug' => 'required|string',
-            'thumbnail' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'thumbnail' => 'required_without:thumbnail_url|nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'thumbnail_url' => 'required_without:thumbnail|nullable|url',
             'video' => 'nullable|mimes:mp4|max:20480', // Max 20MB
         ]);
 
@@ -33,16 +34,28 @@ class GameController extends Controller
         $game->slug = $request->slug;
         $game->status = $request->status;
 
-        if ($request->hasFile('thumbnail')) {
-            $imgName = time() . '_img.' . $request->thumbnail->extension();
-            $request->thumbnail->move(public_path('images/games'), $imgName);
-            $game->thumbnail = $imgName;
+        try {
+            if ($request->hasFile('thumbnail')) {
+                $imgName = time() . '_img.' . $request->thumbnail->extension();
+                $request->thumbnail->move(public_path('images/games'), $imgName);
+                $game->thumbnail = $imgName;
+            } elseif ($request->filled('thumbnail_url')) {
+                $game->thumbnail = $request->thumbnail_url;
+            } else {
+                return back()->withInput()->withErrors(['thumbnail' => 'Silakan upload gambar atau isi URL gambar eksternal.']);
+            }
+        } catch (\Exception $e) {
+            return back()->withInput()->withErrors(['thumbnail' => 'Gagal mengunggah file gambar ke server (sistem serverless Vercel bersifat read-only). Silakan gunakan opsi URL Gambar Eksternal di bawah!']);
         }
 
-        if ($request->hasFile('video')) {
-            $vidName = time() . '_vid.' . $request->video->extension();
-            $request->video->move(public_path('videos/games'), $vidName);
-            $game->video = $vidName;
+        try {
+            if ($request->hasFile('video')) {
+                $vidName = time() . '_vid.' . $request->video->extension();
+                $request->video->move(public_path('videos/games'), $vidName);
+                $game->video = $vidName;
+            }
+        } catch (\Exception $e) {
+            return back()->withInput()->withErrors(['video' => 'Gagal mengunggah file video ke server (sistem serverless Vercel bersifat read-only).']);
         }
 
         $game->save();
@@ -61,19 +74,29 @@ class GameController extends Controller
             'name' => 'required',
             'slug' => 'required|string',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'thumbnail_url' => 'nullable|url',
         ]);
 
         $game->name = $request->name;
         $game->slug = $request->slug;
 
-        if ($request->hasFile('thumbnail')) {
-           
-            if ($game->thumbnail && !str_starts_with($game->thumbnail, 'http') && file_exists(public_path('images/games/' . $game->thumbnail))) {
-                unlink(public_path('images/games/' . $game->thumbnail));
+        try {
+            if ($request->hasFile('thumbnail')) {
+                if ($game->thumbnail && !str_starts_with($game->thumbnail, 'http') && file_exists(public_path('images/games/' . $game->thumbnail))) {
+                    unlink(public_path('images/games/' . $game->thumbnail));
+                }
+                $imgName = time() . '_img.' . $request->thumbnail->extension();
+                $request->thumbnail->move(public_path('images/games'), $imgName);
+                $game->thumbnail = $imgName;
+            } elseif ($request->filled('thumbnail_url')) {
+                // If there was a local image previously, delete it
+                if ($game->thumbnail && !str_starts_with($game->thumbnail, 'http') && file_exists(public_path('images/games/' . $game->thumbnail))) {
+                    unlink(public_path('images/games/' . $game->thumbnail));
+                }
+                $game->thumbnail = $request->thumbnail_url;
             }
-            $imgName = time() . '_img.' . $request->thumbnail->extension();
-            $request->thumbnail->move(public_path('images/games'), $imgName);
-            $game->thumbnail = $imgName;
+        } catch (\Exception $e) {
+            return back()->withInput()->withErrors(['thumbnail' => 'Gagal mengunggah file gambar ke server (sistem serverless Vercel bersifat read-only). Silakan gunakan opsi URL Gambar Eksternal!']);
         }
 
         $game->save();

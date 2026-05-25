@@ -126,7 +126,7 @@
                 @foreach($games as $game)
                 <a href="{{ route('game.show', $game->slug) }}" class="group relative rounded-2xl overflow-hidden bg-white dark:bg-dark-800 border border-slate-200 dark:border-dark-700 hover:border-brand-500 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_40px_-15px_rgba(239,68,68,0.3)]">
                     <div class="aspect-[4/5] w-full relative">
-                        <img src="{{ asset('images/games/'.$game->thumbnail) }}" class="w-full h-full object-cover bg-slate-200 dark:bg-dark-900" alt="{{ $game->name }}">
+                        <img src="{{ str_starts_with($game->thumbnail, 'http') ? $game->thumbnail : asset('images/games/'.$game->thumbnail) }}" class="w-full h-full object-cover bg-slate-200 dark:bg-dark-900" alt="{{ $game->name }}">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
                     </div>
                     <div class="absolute bottom-0 w-full p-4 transform transition-transform">

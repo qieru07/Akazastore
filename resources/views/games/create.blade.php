@@ -33,17 +33,27 @@
 
                         <!-- Thumbnail (Gambar) -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Thumbnail Game (Untuk Daftar Game)</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 font-bold">Opsi A: Upload Thumbnail Game</label>
                             <div class="mt-1 flex items-center gap-4">
                                 <div id="preview-container" class="hidden">
                                     <img id="image-preview" src="#" alt="Preview" class="h-20 w-20 object-cover rounded-lg border-2 border-indigo-500 shadow-sm">
                                 </div>
-                                <input type="file" name="thumbnail" id="thumbnail" accept="image/*" required
+                                <input type="file" name="thumbnail" id="thumbnail" accept="image/*"
                                     onchange="previewImage(event)"
                                     class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
                             </div>
                             <p class="mt-2 text-xs text-gray-500">Format: JPG, PNG, atau WebP. Maksimal 2MB.</p>
                             @error('thumbnail') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <!-- Thumbnail URL (Alternatif Vercel) -->
+                        <div>
+                            <label for="thumbnail_url" class="block text-sm font-medium text-gray-700 dark:text-gray-300 font-bold">Opsi B: Atau Gunakan URL Gambar Eksternal (Sangat Direkomendasikan untuk Vercel)</label>
+                            <input type="url" name="thumbnail_url" id="thumbnail_url" value="{{ old('thumbnail_url') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                                placeholder="Contoh: https://i.imgur.com/xyz.png">
+                            <p class="mt-1 text-xs text-gray-500">Gunakan opsi ini jika upload langsung gagal karena batasan server (read-only filesystem pada Vercel). Anda bisa mengunggah gambar ke situs gratis seperti postimages.org atau imgur.com lalu salin "Direct Link" gambarnya di sini.</p>
+                            @error('thumbnail_url') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- Video Promo (Slide/Carousel) - BARU -->
