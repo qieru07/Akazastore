@@ -827,6 +827,7 @@ a {
 @media (max-width: 768px) {
     .container {
         padding: 14px;
+        padding-bottom: 100px;
     }
 
     .content-layout {

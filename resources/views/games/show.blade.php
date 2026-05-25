@@ -36,7 +36,7 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="antialiased">
+<body class="antialiased" x-data="{ showInfo: false, infoTitle: '', infoText: '' }">
 
     <!-- Navbar -->
     <nav class="fixed w-full z-50 glass-nav top-0 transition-all duration-300">
@@ -100,7 +100,10 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">User ID</label>
+                            <label class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                User ID
+                                <button type="button" @click="infoTitle = 'User ID'; infoText = 'Untuk menemukan User ID kamu, silakan buka profil game kamu. User ID biasanya tertera di bawah nama karakter atau di sudut layar utama game. Silakan masukkan User ID tersebut dengan teliti agar pengiriman diamond/koin berjalan lancar.'; showInfo = true" class="w-4 h-4 inline-flex items-center justify-center rounded-full bg-brand-500/10 text-brand-500 hover:bg-brand-500/20 transition text-[10px] font-bold">ⓘ</button>
+                            </label>
                             <input type="text" placeholder="Masukkan User ID" class="w-full bg-slate-100 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all dark:text-white">
                         </div>
                         <div class="space-y-2">
@@ -181,7 +184,10 @@
                         <h2 class="text-xl font-bold text-slate-900 dark:text-white">Nomor WhatsApp</h2>
                     </div>
                     <div class="space-y-2">
-                        <label class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">WhatsApp</label>
+                        <label class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                            WhatsApp
+                            <button type="button" @click="infoTitle = 'Nomor WhatsApp'; infoText = 'Masukkan nomor WhatsApp aktif kamu untuk menerima notifikasi pembayaran, update status pesanan secara real-time, dan struk pembelian.'; showInfo = true" class="w-4 h-4 inline-flex items-center justify-center rounded-full bg-brand-500/10 text-brand-500 hover:bg-brand-500/20 transition text-[10px] font-bold">ⓘ</button>
+                        </label>
                         <input type="tel" placeholder="08xxxxxxxxxx" class="w-full bg-slate-100 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all dark:text-white">
                         <p class="text-[10px] text-slate-400 italic mt-2">*Bukti pembayaran akan dikirimkan melalui WhatsApp</p>
                     </div>
@@ -218,5 +224,41 @@
             <p class="text-slate-400 dark:text-gray-600 text-xs">&copy; {{ date('Y') }} AkazaStore. All rights reserved.</p>
         </div>
     </footer>
+    <!-- Info Modal (Tailwind + Alpine) -->
+    <div x-show="showInfo" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+         x-cloak>
+        <div @click.away="showInfo = false" 
+             x-show="showInfo"
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             class="bg-white dark:bg-dark-800 border border-slate-200 dark:border-white/5 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            
+            <div class="flex items-center gap-3 px-6 py-5 bg-gradient-to-r from-brand-500/10 to-transparent border-b border-slate-200 dark:border-white/5">
+                <div class="w-9 h-9 bg-brand-500 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow-md shadow-brand-500/20">ⓘ</div>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white" x-text="infoTitle">Informasi</h3>
+                <button @click="showInfo = false" class="ml-auto w-8 h-8 rounded-lg bg-slate-100 dark:bg-dark-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white flex items-center justify-center transition">✕</button>
+            </div>
+            
+            <div class="p-6">
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed" x-text="infoText"></p>
+            </div>
+            
+            <div class="px-6 pb-6">
+                <button @click="showInfo = false" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/25 transition-all uppercase tracking-widest text-sm">Mengerti</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
