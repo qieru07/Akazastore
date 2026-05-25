@@ -826,6 +826,10 @@ a {
 }
 
 @media (max-width: 768px) {
+    .order-card {
+        display: none !important;
+    }
+
     .container {
         padding: 14px;
         padding-bottom: 100px;
