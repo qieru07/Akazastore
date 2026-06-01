@@ -1,8 +1,8 @@
 <?php
-session_start();
 include __DIR__ . "/koneksi.php";
+require_once __DIR__ . "/auth_helper.php";
 
-$username = $_SESSION['username'] ?? 'Guest';
+$username = auth_check() ?? 'Guest';
 $user_id = $_POST['user_id'];
 $whatsapp = $_POST['whatsapp'];
 $email = $_POST['email'];

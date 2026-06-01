@@ -1,14 +1,14 @@
 <?php
-session_start();
 include __DIR__ . "/koneksi.php";
+require_once __DIR__ . "/auth_helper.php";
+
+$username = auth_check();
 
 // Cek apakah sudah login
-if (!isset($_SESSION['username'])) {
+if (!$username) {
     header("Location: auth/login.php");
     exit;
 }
-
-$username = $_SESSION['username'];
 
 // Ambil riwayat transaksi milik user ini
 $query = mysqli_query($conn, "SELECT * FROM transaksi WHERE username='$username' ORDER BY id DESC");

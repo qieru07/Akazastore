@@ -1,10 +1,12 @@
 <?php
-session_start();
+require_once __DIR__ . '/../koneksi.php';
+require_once __DIR__ . '/../auth_helper.php';
+$logged_in_user = auth_check();
 $game_id = $_GET['id'] ?? null;
 $game_name = "Free Fire"; // Default
 $game_img = "../asset/img/freefire.jpg"; // Default fallback
 
-require_once __DIR__ . '/../koneksi.php';
+
 
 // Jika id tidak dikirim di URL, cari id secara otomatis dari database berdasarkan nama game
 if (!$game_id) {
@@ -433,8 +435,8 @@ $stars_display = str_repeat('★', $stars_full) . str_repeat('☆', 5 - $stars_f
         <a href="../kalkulator.php">🧮 Kalkulator</a>
         <div class="auth-section">
           <div class="auth-label">Akun</div>
-          <?php if(isset($_SESSION['username'])): ?>
-              <a href="../dashboard_user.php">👤 Akun: <?= $_SESSION['username']; ?></a>
+          <?php if($logged_in_user): ?>
+              <a href="../dashboard_user.php">👤 Akun: <?= $logged_in_user; ?></a>
               <a href="../auth/logout.php">🚪 Logout</a>
           <?php else: ?>
               <a href="../auth/login.php">🔑 Masuk</a>
