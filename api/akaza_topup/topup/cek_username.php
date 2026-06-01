@@ -28,49 +28,81 @@ if ($api_id === 'PASTE_API_ID_KAMU_DISINI' || $api_key === 'PASTE_API_KEY_KAMU_D
     exit;
 }
 
-// Hitung MD5 Signature sesuai standar VIP Reseller: md5(API_ID + API_KEY)
-$sign = md5($api_id . $api_key);
+/**
+ * Fungsi pembantu untuk menembak API VIP Reseller
+ */
+function check_nickname_vip($api_id, $api_key, $id, $server, $code) {
+    $sign = md5($api_id . $api_key);
+    $payload = [
+        'key' => $api_key,
+        'sign' => $sign,
+        'type' => 'get-nickname',
+        'code' => $code,
+        // Kirimkan semua variasi parameter agar kompatibel dengan versi API lama maupun baru
+        'target' => $id,
+        'target2' => $server,
+        'data_no' => $id,
+        'data_zone' => $server,
+        'additional_target' => $server
+    ];
 
-// Siapkan Payload data untuk cek nickname
-$payload = [
-    'key' => $api_key,
-    'sign' => $sign,
-    'type' => 'get-nickname',
-    'code' => 'mobile-legends', // Kode game MLBB di API VIP Reseller
-    'target' => $id,
-    'target2' => $server // Zone ID
-];
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://vip-reseller.co.id/api/game-feature');
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payload));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Bypass SSL untuk local dev
+    curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4); // Paksa gunakan IPv4 agar lebih mudah di-whitelist
+    
+    $response = curl_exec($ch);
+    $err = curl_error($ch);
+    curl_close($ch);
 
-// Request via cURL
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, 'https://vip-reseller.co.id/api/game-feature');
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payload));
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Bypass SSL untuk local dev
-curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4); // Paksa gunakan IPv4 agar lebih mudah di-whitelist di VIP Reseller
-
-$response = curl_exec($ch);
-$err = curl_error($ch);
-curl_close($ch);
-
-// Logging hasil API untuk keperluan debug admin
-$log_msg = "[" . date('Y-m-d H:i:s') . "] ID: $id | Server: $server | cURL Error: " . ($err ?: 'None') . " | Response: " . $response . "\n";
-file_put_contents(__DIR__ . '/debug_check.log', $log_msg, FILE_APPEND);
-
-if ($err) {
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Gagal terhubung ke server provider: ' . $err
-    ]);
-    exit;
+    return [
+        'success' => !$err,
+        'error' => $err,
+        'response' => $response
+    ];
 }
 
-$result = json_decode($response, true);
+// 1. Coba request pertama menggunakan kode 'mobile-legends' (plural)
+$res = check_nickname_vip($api_id, $api_key, $id, $server, 'mobile-legends');
 
-// Evaluasi respon dari VIP Reseller
-if (isset($result['result']) && $result['result'] == true) {
-    
+$success = false;
+$final_response = '';
+$result = null;
+
+if ($res['success']) {
+    $final_response = $res['response'];
+    $result = json_decode($final_response, true);
+    if (isset($result['result']) && $result['result'] == true) {
+        $success = true;
+    }
+}
+
+// 2. Jika gagal, coba request kedua (self-healing fallback) menggunakan kode 'mobile-legend' (singular)
+if (!$success) {
+    $res_fallback = check_nickname_vip($api_id, $api_key, $id, $server, 'mobile-legend');
+    if ($res_fallback['success']) {
+        $result_fallback = json_decode($res_fallback['response'], true);
+        if (isset($result_fallback['result']) && $result_fallback['result'] == true) {
+            $success = true;
+            $final_response = $res_fallback['response'];
+            $result = $result_fallback;
+        } elseif (!$result) {
+            // Jika kedua-duanya gagal, rekam respon yang gagal
+            $final_response = $res_fallback['response'];
+            $result = $result_fallback;
+        }
+    }
+}
+
+// Logging hasil API untuk keperluan debug admin
+$log_msg = "[" . date('Y-m-d H:i:s') . "] ID: $id | Server: $server | Response: " . $final_response . "\n";
+file_put_contents(__DIR__ . '/debug_check.log', $log_msg, FILE_APPEND);
+
+// Evaluasi respon sukses akhir
+if ($success && isset($result['result']) && $result['result'] == true) {
     // Ekstrak nickname secara aman
     $nickname = '';
     if (isset($result['data'])) {
