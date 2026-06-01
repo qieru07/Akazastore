@@ -98,8 +98,10 @@ if (!$success) {
 }
 
 // Logging hasil API untuk keperluan debug admin
+// Vercel memiliki filesystem read-only, jadi log diarahkan ke /tmp
 $log_msg = "[" . date('Y-m-d H:i:s') . "] ID: $id | Server: $server | Response: " . $final_response . "\n";
-file_put_contents(__DIR__ . '/debug_check.log', $log_msg, FILE_APPEND);
+$log_path = is_writable(__DIR__) ? __DIR__ . '/debug_check.log' : '/tmp/debug_check.log';
+@file_put_contents($log_path, $log_msg, FILE_APPEND);
 
 // Evaluasi respon sukses akhir
 if ($success && isset($result['result']) && $result['result'] == true) {

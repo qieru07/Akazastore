@@ -25,6 +25,11 @@
       "headers": { "Location": "/akaza_topup/" }
     },
     {
+      "src": "^/akaza_topup/midtrans_webhook\\.php$",
+      "dest": "/api/akaza_topup/midtrans_webhook.php",
+      "methods": ["GET", "POST"]
+    },
+    {
       "src": "^/akaza_topup/(.*\\.php)$",
       "dest": "/api/akaza_topup/$1"
     },
