@@ -77,7 +77,7 @@ if ($banners_query) {
       <nav class="nav-links">
           <a href="#">Topup</a>
           <a href="riwayat.php">Cek Transaksi</a>
-          <a href="#">Kalkulator</a>
+          <a href="kalkulator.php">Kalkulator</a>
 
           <?php if($logged_in_user): ?>
               <a class="auth" href="dashboard_user.php" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px; padding: 4px 12px;">👤 Akun: <?= $logged_in_user; ?></a>
@@ -112,7 +112,7 @@ if ($banners_query) {
       <div class="mobile-nav-links">
         <a href="#">🎮 Topup</a>
         <a href="riwayat.php">📋 Cek Transaksi</a>
-        <a href="#">🧮 Kalkulator</a>
+        <a href="kalkulator.php">🧮 Kalkulator</a>
         <div class="auth-section">
           <div class="auth-label">Akun</div>
           <?php if($logged_in_user): ?>
