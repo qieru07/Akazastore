@@ -4,12 +4,13 @@ let firstTimeItems = [];
 
 const urlParams = new URLSearchParams(window.location.search);
 const gameId = window.gameId || urlParams.get('id');
+const apiBase = window.apiBase || (window.location.hostname === 'localhost' ? 'http://localhost/akazastore/public/api' : window.location.origin + '/api');
 
 async function fetchProducts() {
     if (!gameId) return;
     
     try {
-        const response = await fetch(`http://localhost/akazastore/public/api/games`);
+        const response = await fetch(`${apiBase}/games`);
         const result = await response.json();
         
         if (result.status === 'success') {
@@ -175,7 +176,7 @@ function selectItem(card, item) {
 
 async function fetchPayments() {
     try {
-        const response = await fetch(`http://localhost/akazastore/public/api/payments`);
+        const response = await fetch(`${apiBase}/payments`);
         const result = await response.json();
         
         if (result.status === 'success') {

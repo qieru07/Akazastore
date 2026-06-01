@@ -1,6 +1,9 @@
 <?php
 require_once __DIR__ . '/koneksi.php';
 require_once __DIR__ . '/helper.php';
+require_once __DIR__ . '/auth_helper.php';
+
+$logged_in_user = auth_check();
 
 $games = [];
 $games_query = mysqli_query($conn, "SELECT * FROM games WHERE status = 1");
@@ -25,7 +28,7 @@ if ($games_query) {
     }
 }
 
-session_start(); 
+
 
 $banners = [];
 $banners_query = mysqli_query($conn, "SELECT * FROM banners WHERE status = 1");
@@ -76,8 +79,8 @@ if ($banners_query) {
           <a href="riwayat.php">Cek Transaksi</a>
           <a href="#">Kalkulator</a>
 
-          <?php if(isset($_SESSION['username'])): ?>
-              <a class="auth" href="dashboard_user.php" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px; padding: 4px 12px;">👤 Akun: <?= $_SESSION['username']; ?></a>
+          <?php if($logged_in_user): ?>
+              <a class="auth" href="dashboard_user.php" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px; padding: 4px 12px;">👤 Akun: <?= $logged_in_user; ?></a>
               <a class="auth" href="auth/logout.php">Logout</a>
           <?php else: ?>
               <a class="auth" href="auth/login.php">Masuk</a>
@@ -112,8 +115,8 @@ if ($banners_query) {
         <a href="#">🧮 Kalkulator</a>
         <div class="auth-section">
           <div class="auth-label">Akun</div>
-          <?php if(isset($_SESSION['username'])): ?>
-              <a href="dashboard_user.php">👤 Akun: <?= $_SESSION['username']; ?></a>
+          <?php if($logged_in_user): ?>
+              <a href="dashboard_user.php">👤 Akun: <?= $logged_in_user; ?></a>
               <a href="auth/logout.php">🚪 Logout</a>
           <?php else: ?>
               <a href="auth/login.php">🔑 Masuk</a>

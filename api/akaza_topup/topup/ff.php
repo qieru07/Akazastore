@@ -710,6 +710,7 @@ if (mobileNavOverlay) {
 </body>
 <script>
   window.gameId = '<?= $game_id ?>';
+  window.apiBase = '<?= get_api_base_url() ?>';
 </script>
 <script src="ff.js"></script>
 </html>

@@ -1,6 +1,6 @@
 <?php
-session_start();
 include __DIR__ . "/../koneksi.php";
+require_once __DIR__ . "/../auth_helper.php";
 
 $infoMessage = '';
 if (isset($_GET['reset']) && $_GET['reset'] === 'success') {
@@ -19,7 +19,7 @@ if (isset($_POST['login'])) {
     mysqli_stmt_close($query);
 
     if ($storedPassword && (password_verify($password, $storedPassword) || $password === $storedPassword)) {
-        $_SESSION['username'] = $username;
+        auth_login($username);
         header("Location: ../index.php");
         exit;
     } else {
