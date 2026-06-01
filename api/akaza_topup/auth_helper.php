@@ -4,9 +4,25 @@
  * Menyimpan token di tabel user_sessions di database
  */
 
+if (!function_exists('ensure_sessions_table_exists')) {
+    function ensure_sessions_table_exists($conn) {
+        mysqli_query($conn, "CREATE TABLE IF NOT EXISTS `user_sessions` (
+            `id` INT AUTO_INCREMENT PRIMARY KEY,
+            `username` VARCHAR(100) NOT NULL,
+            `token` VARCHAR(128) NOT NULL,
+            `expires_at` DATETIME NOT NULL,
+            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY `token` (`token`),
+            KEY `username` (`username`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    }
+}
+
 if (!function_exists('auth_login')) {
     function auth_login($username) {
         global $conn;
+        ensure_sessions_table_exists($conn);
+        
         $token = bin2hex(random_bytes(32)); // 64-char random token
         $expires_at = date('Y-m-d H:i:s', time() + (30 * 24 * 60 * 60)); // 30 hari
 
@@ -50,16 +66,7 @@ if (!function_exists('auth_check')) {
 
         if (!$token) return null;
 
-        // Pastikan tabel ada
-        mysqli_query($conn, "CREATE TABLE IF NOT EXISTS `user_sessions` (
-            `id` INT AUTO_INCREMENT PRIMARY KEY,
-            `username` VARCHAR(100) NOT NULL,
-            `token` VARCHAR(128) NOT NULL,
-            `expires_at` DATETIME NOT NULL,
-            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY `token` (`token`),
-            KEY `username` (`username`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        ensure_sessions_table_exists($conn);
 
         $token_esc = mysqli_real_escape_string($conn, $token);
         $res = mysqli_query($conn, "SELECT username FROM user_sessions WHERE token='$token_esc' AND expires_at > NOW() LIMIT 1");
@@ -74,6 +81,8 @@ if (!function_exists('auth_check')) {
 if (!function_exists('auth_logout')) {
     function auth_logout() {
         global $conn;
+        ensure_sessions_table_exists($conn);
+        
         $token = $_COOKIE['akaza_auth'] ?? null;
         if ($token) {
             $token_esc = mysqli_real_escape_string($conn, $token);
@@ -94,3 +103,4 @@ if (!function_exists('auth_logout')) {
         }
     }
 }
+
