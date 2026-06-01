@@ -357,11 +357,35 @@ function rupiah($angka){
         <!-- Payment Section (QRIS vs VA) -->
         <div class="payment-area">
             <?php if ($snap_token): ?>
-                <div class="midtrans-pay-box" style="text-align: center; padding: 25px 0 10px;">
-                    <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">Pembayaran via Midtrans otomatis & aman.</p>
-                    <button id="pay-button" class="btn-primary" style="background: linear-gradient(135deg, #10b981, #059669); color: white; width: 100%; padding: 15px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); font-size: 1rem; letter-spacing: 0.5px; transition: transform 0.2s; max-width: 320px; margin: 0 auto; display: block;">
+                <div class="midtrans-pay-box" style="text-align: center; padding: 20px 0 10px;">
+                    <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 16px;">Pembayaran via Midtrans otomatis &amp; aman.</p>
+                    
+                    <!-- Pilih Metode Pembayaran -->
+                    <div id="payment-method-selector" style="display: flex; gap: 12px; margin-bottom: 18px; justify-content: center; flex-wrap: wrap;">
+                        <div class="pay-method-card" id="method-qris" onclick="selectMethod('qris')" style="
+                            flex: 1; min-width: 130px; max-width: 180px; padding: 14px 10px;
+                            border: 2px solid #334155; border-radius: 14px; cursor: pointer;
+                            background: #1e293b; transition: all 0.25s ease;
+                            display: flex; flex-direction: column; align-items: center; gap: 8px;
+                        ">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/QRIS_logo.svg/200px-QRIS_logo.svg.png" alt="QRIS" style="width:56px;">
+                            <span style="color: #cbd5e1; font-size: 0.82rem; font-weight: 600;">QRIS All Payment</span>
+                        </div>
+                        <div class="pay-method-card" id="method-bca" onclick="selectMethod('bca_va')" style="
+                            flex: 1; min-width: 130px; max-width: 180px; padding: 14px 10px;
+                            border: 2px solid #334155; border-radius: 14px; cursor: pointer;
+                            background: #1e293b; transition: all 0.25s ease;
+                            display: flex; flex-direction: column; align-items: center; gap: 8px;
+                        ">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/200px-Bank_Central_Asia.svg.png" alt="BCA" style="width:56px;">
+                            <span style="color: #cbd5e1; font-size: 0.82rem; font-weight: 600;">BCA Virtual Account</span>
+                        </div>
+                    </div>
+
+                    <button id="pay-button" class="btn-primary" disabled style="background: linear-gradient(135deg, #10b981, #059669); color: white; width: 100%; padding: 15px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); font-size: 1rem; letter-spacing: 0.5px; transition: all 0.2s; max-width: 320px; margin: 0 auto; display: block; opacity: 0.45;">
                         💳 BAYAR SEKARANG
                     </button>
+                    <p id="pay-hint" style="color:#64748b; font-size:0.78rem; margin-top:10px;">Pilih metode pembayaran di atas terlebih dahulu</p>
                 </div>
             <?php else: ?>
                 <?php if (isset($pay_info['type']) && $pay_info['type'] == 'qris'): ?>
@@ -571,10 +595,53 @@ function submitModalReview() {
   src="<?= MIDTRANS_IS_PRODUCTION ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' ?>"
   data-client-key="<?= MIDTRANS_CLIENT_KEY ?>"></script>
 <script type="text/javascript">
+  // Metode pembayaran yang dipilih user
+  let selectedPayMethod = null;
+
+  // Mapping pilihan user ke kode enabledPayments Midtrans
+  const methodMap = {
+    'qris': ['qris'],
+    'bca_va': ['bca_va']
+  };
+
+  function selectMethod(method) {
+    selectedPayMethod = method;
+
+    // Reset semua card
+    document.querySelectorAll('.pay-method-card').forEach(card => {
+        card.style.borderColor = '#334155';
+        card.style.background = '#1e293b';
+        card.style.transform = 'scale(1)';
+        card.style.boxShadow = 'none';
+    });
+
+    // Highlight yang dipilih
+    const idMap = { 'qris': 'method-qris', 'bca_va': 'method-bca' };
+    const selected = document.getElementById(idMap[method]);
+    if (selected) {
+        selected.style.borderColor = '#10b981';
+        selected.style.background = 'rgba(16, 185, 129, 0.1)';
+        selected.style.transform = 'scale(1.03)';
+        selected.style.boxShadow = '0 0 0 3px rgba(16,185,129,0.2)';
+    }
+
+    // Aktifkan tombol bayar
+    const btn = document.getElementById('pay-button');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'pointer';
+    document.getElementById('pay-hint').style.display = 'none';
+  }
+
   const payBtn = document.getElementById('pay-button');
   if (payBtn) {
       payBtn.addEventListener('click', function () {
+        if (!selectedPayMethod) return;
+        
+        const enabledPayments = methodMap[selectedPayMethod] || [];
+        
         snap.pay('<?= $snap_token ?>', {
+          enabledPayments: enabledPayments,
           onSuccess: function(result){
             alert("Pembayaran sukses!");
             window.location.reload();
