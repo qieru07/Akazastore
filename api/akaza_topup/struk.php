@@ -1,6 +1,7 @@
 <?php
 include __DIR__ . "/koneksi.php";
 require_once __DIR__ . "/helper.php";
+require_once __DIR__ . "/midtrans_helper.php";
 
 $id = $_GET['id'] ?? null;
 
@@ -22,6 +23,13 @@ if (!$data) {
 $metode_code = $data['metode'];
 $pay_query = mysqli_query($conn, "SELECT * FROM payment_methods WHERE code='$metode_code' LIMIT 1");
 $pay_info = mysqli_fetch_assoc($pay_query);
+
+// Dapatkan Snap Token secara dinamis jika status masih PENDING
+$snap_token = null;
+if ($data['status'] === 'PENDING') {
+    $total_pembayaran = $data['nominal'] + $data['kode_unik'];
+    $snap_token = dapatkan_snap_token($data['id'], $total_pembayaran, $data['item'], $data);
+}
 
 // Check if already reviewed
 $already_reviewed = false;
@@ -348,25 +356,34 @@ function rupiah($angka){
 
         <!-- Payment Section (QRIS vs VA) -->
         <div class="payment-area">
-            <?php if (isset($pay_info['type']) && $pay_info['type'] == 'qris'): ?>
-                <div class="qris-only">
-                    <div class="qr-frame">
-                        <?php if(!empty($pay_info['image'])): ?>
-                            <img src="<?= get_image_base_url(); ?>/payments/<?= $pay_info['image']; ?>" alt="QRIS"
-                                 onerror="this.onerror=null;this.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=AKZ-<?= $data['id']; ?>';">
-                        <?php else: ?>
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=AKZ-<?= $data['id']; ?>" alt="QRIS">
-                        <?php endif; ?>
-                    </div>
+            <?php if ($snap_token): ?>
+                <div class="midtrans-pay-box" style="text-align: center; padding: 25px 0 10px;">
+                    <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">Pembayaran via Midtrans otomatis & aman.</p>
+                    <button id="pay-button" class="btn-primary" style="background: linear-gradient(135deg, #10b981, #059669); color: white; width: 100%; padding: 15px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); font-size: 1rem; letter-spacing: 0.5px; transition: transform 0.2s; max-width: 320px; margin: 0 auto; display: block;">
+                        💳 BAYAR SEKARANG
+                    </button>
                 </div>
             <?php else: ?>
-                <div class="va-display">
-                    <span class="va-title"><?= $pay_info['name'] ?? $data['metode']; ?></span>
-                    <div class="va-card">
-                        <span id="vaNumber"><?= $pay_info['account_number'] ?? 'BELUM DIATUR'; ?></span>
-                        <button onclick="copyVA()" class="copy-btn">SALIN</button>
+                <?php if (isset($pay_info['type']) && $pay_info['type'] == 'qris'): ?>
+                    <div class="qris-only">
+                        <div class="qr-frame">
+                            <?php if(!empty($pay_info['image'])): ?>
+                                <img src="<?= get_image_base_url(); ?>/payments/<?= $pay_info['image']; ?>" alt="QRIS"
+                                     onerror="this.onerror=null;this.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=AKZ-<?= $data['id']; ?>';">
+                            <?php else: ?>
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=AKZ-<?= $data['id']; ?>" alt="QRIS">
+                            <?php endif; ?>
+                        </div>
                     </div>
-                </div>
+                <?php else: ?>
+                    <div class="va-display">
+                        <span class="va-title"><?= $pay_info['name'] ?? $data['metode']; ?></span>
+                        <div class="va-card">
+                            <span id="vaNumber"><?= $pay_info['account_number'] ?? 'BELUM DIATUR'; ?></span>
+                            <button onclick="copyVA()" class="copy-btn">SALIN</button>
+                        </div>
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
 
@@ -548,6 +565,35 @@ function submitModalReview() {
 }
 <?php endif; ?>
 </script>
+
+<?php if ($snap_token): ?>
+<script type="text/javascript"
+  src="<?= MIDTRANS_IS_PRODUCTION ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' ?>"
+  data-client-key="<?= MIDTRANS_CLIENT_KEY ?>"></script>
+<script type="text/javascript">
+  const payBtn = document.getElementById('pay-button');
+  if (payBtn) {
+      payBtn.addEventListener('click', function () {
+        snap.pay('<?= $snap_token ?>', {
+          onSuccess: function(result){
+            alert("Pembayaran sukses!");
+            window.location.reload();
+          },
+          onPending: function(result){
+            alert("Menunggu pembayaran...");
+            window.location.reload();
+          },
+          onError: function(result){
+            alert("Pembayaran gagal!");
+          },
+          onClose: function(){
+            console.log('Customer closed the popup without finishing the payment');
+          }
+        });
+      });
+  }
+</script>
+<?php endif; ?>
 
 </body>
 </html>

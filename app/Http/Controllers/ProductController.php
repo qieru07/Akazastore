@@ -27,6 +27,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'category' => 'required|string',
             'price' => 'required|numeric',
+            'provider_code' => 'nullable|string',
         ]);
 
         Product::create($request->all());
@@ -47,6 +48,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'category' => 'required|string',
             'price' => 'required|numeric',
+            'provider_code' => 'nullable|string',
         ]);
 
         $product->update($request->all());

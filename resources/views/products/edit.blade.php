@@ -45,6 +45,12 @@
                             <x-input-label for="price" :value="__('Harga (Rupiah)')" class="text-gray-300" />
                             <x-text-input id="price" name="price" type="number" class="mt-1 block w-full bg-gray-900 border-gray-700" :value="$product->price" required />
                         </div>
+
+                        <!-- Kode Provider (VIP Reseller) -->
+                        <div>
+                            <x-input-label for="provider_code" :value="__('Kode Provider (VIP Reseller)')" class="text-gray-300" />
+                            <x-text-input id="provider_code" name="provider_code" type="text" class="mt-1 block w-full bg-gray-900 border-gray-700" :value="$product->provider_code" placeholder="Misal: ML50, FF100 (Kosongkan jika manual)" />
+                        </div>
                     </div>
 
                     <div class="mt-8 flex items-center gap-4">

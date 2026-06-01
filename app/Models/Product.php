@@ -10,7 +10,8 @@ class Product extends Model
         'game_id',
         'name',
         'category',
-        'price'
+        'price',
+        'provider_code'
     ];
 
     public function game()

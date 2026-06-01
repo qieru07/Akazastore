@@ -10,4 +10,10 @@ $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name, $db_port);
 if (!$conn) {
     die("Koneksi gagal: " . mysqli_connect_error());
 }
+
+// Auto-patch: pastikan kolom 'catatan' ada di tabel transaksi untuk log pengiriman otomatis
+$check_col = mysqli_query($conn, "SHOW COLUMNS FROM `transaksi` LIKE 'catatan'");
+if ($check_col && mysqli_num_rows($check_col) == 0) {
+    mysqli_query($conn, "ALTER TABLE `transaksi` ADD `catatan` TEXT NULL");
+}
 ?>
