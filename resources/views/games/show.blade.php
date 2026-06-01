@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        if (localStorage.getItem('akaza_theme') === 'dark' || (!('akaza_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        if (localStorage.getItem('akaza_theme') !== 'light') {
             document.documentElement.classList.add('dark')
         } else {
             document.documentElement.classList.remove('dark')

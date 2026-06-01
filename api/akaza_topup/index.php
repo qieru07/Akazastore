@@ -6,7 +6,15 @@ $games = [];
 $games_query = mysqli_query($conn, "SELECT * FROM games WHERE status = 1");
 if ($games_query) {
     while ($row = mysqli_fetch_assoc($games_query)) {
-        $thumbnail = $row['thumbnail'];
+        // Dynamic correction for Roblox (broad match)
+        $name_lower = strtolower($row['name'] ?? '');
+        $slug_lower = strtolower($row['slug'] ?? '');
+        if (strpos($name_lower, 'roblox') !== false || strpos($slug_lower, 'roblox') !== false || $slug_lower === 'rb') {
+            $row['thumbnail'] = 'Roblox.png';
+            @mysqli_query($conn, "UPDATE games SET thumbnail = 'Roblox.png' WHERE id = " . intval($row['id']));
+        }
+        
+        $thumbnail = $row['thumbnail'] ?? '';
         if (str_starts_with($thumbnail, 'http')) {
             $row['thumbnail_url'] = $thumbnail;
         } else {
@@ -191,6 +199,112 @@ if ($banners_query) {
           <?php endif; ?>
       </div>
     </section>
+
+    <!-- ===== REVIEWS SECTION ===== -->
+    <?php
+    // Buat tabel jika belum ada
+    mysqli_query($conn, "CREATE TABLE IF NOT EXISTS `reviews` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `transaksi_id` INT NOT NULL,
+        `username` VARCHAR(100) NOT NULL,
+        `game` VARCHAR(100) NOT NULL,
+        `rating` TINYINT(1) NOT NULL DEFAULT 5,
+        `komentar` TEXT,
+        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    // Ambil total review & rata-rata rating
+    $stats_res = mysqli_query($conn, "SELECT COUNT(*) as total, AVG(rating) as avg_rating FROM reviews");
+    $stats = mysqli_fetch_assoc($stats_res);
+    $total_reviews = $stats['total'] ?? 0;
+    $avg_rating    = round($stats['avg_rating'] ?? 0, 1);
+
+    // Ambil 10 review terbaru
+    $reviews_res = mysqli_query($conn, "SELECT * FROM reviews ORDER BY created_at DESC LIMIT 10");
+    $reviews = [];
+    if ($reviews_res) {
+        while ($r = mysqli_fetch_assoc($reviews_res)) $reviews[] = $r;
+    }
+    ?>
+
+    <?php if ($total_reviews > 0): ?>
+    <section class="section reviews-section">
+      <div class="section-header">
+        <span class="fire">💬</span>
+        <h2>ULASAN PEMBELI</h2>
+        <p class="section-subtitle">
+          Rating rata-rata <strong style="color:#f59e0b"><?= $avg_rating; ?> ⭐</strong>
+          dari <strong><?= number_format($total_reviews); ?></strong> pembeli
+        </p>
+      </div>
+
+      <style>
+      .reviews-section { padding: 0 1.2rem 2.5rem; max-width: 1100px; margin: 0 auto; }
+      .reviews-track-wrap { overflow: hidden; position: relative; }
+      .reviews-track {
+          display: flex;
+          gap: 16px;
+          animation: scrollReviews 30s linear infinite;
+          width: max-content;
+      }
+      .reviews-track:hover { animation-play-state: paused; }
+      @keyframes scrollReviews {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+      }
+      .review-item {
+          background: linear-gradient(135deg, #0f172a, #1e293b);
+          border: 1px solid rgba(255,255,255,0.07);
+          border-radius: 16px;
+          padding: 18px 20px;
+          min-width: 260px;
+          max-width: 280px;
+          flex-shrink: 0;
+      }
+      .review-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+      .review-avatar {
+          width: 36px; height: 36px; border-radius: 50%;
+          background: linear-gradient(135deg, #3b82f6, #6366f1);
+          display: flex; align-items: center; justify-content: center;
+          font-weight: 800; font-size: 0.9rem; color: #fff; flex-shrink: 0;
+      }
+      .review-user { font-size: 0.85rem; font-weight: 600; color: #e2e8f0; }
+      .review-game { font-size: 0.72rem; color: #64748b; }
+      .review-stars { color: #f59e0b; font-size: 0.95rem; margin-bottom: 8px; letter-spacing: 1px; }
+      .review-text { font-size: 0.82rem; color: #94a3b8; line-height: 1.5; }
+      .review-date { font-size: 0.7rem; color: #334155; margin-top: 10px; }
+      </style>
+
+      <div class="reviews-track-wrap">
+        <div class="reviews-track" id="reviewsTrack">
+          <?php
+          // Duplikasi array untuk efek infinite scroll
+          $all = array_merge($reviews, $reviews);
+          foreach ($all as $rv):
+              $stars = str_repeat('★', $rv['rating']) . str_repeat('☆', 5 - $rv['rating']);
+              $avatar_letter = strtoupper(substr($rv['username'], 0, 1));
+              $komentar = $rv['komentar'] ?: 'Transaksi lancar dan cepat!';
+              $tanggal  = date('d M Y', strtotime($rv['created_at']));
+              $username_display = substr($rv['username'], 0, 3) . str_repeat('*', max(0, strlen($rv['username']) - 3));
+          ?>
+          <div class="review-item">
+            <div class="review-header">
+              <div class="review-avatar"><?= $avatar_letter; ?></div>
+              <div>
+                <div class="review-user"><?= htmlspecialchars($username_display); ?></div>
+                <div class="review-game"><?= htmlspecialchars($rv['game']); ?></div>
+              </div>
+            </div>
+            <div class="review-stars"><?= $stars; ?></div>
+            <div class="review-text">"<?= htmlspecialchars($komentar); ?>"</div>
+            <div class="review-date"><?= $tanggal; ?></div>
+          </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    </section>
+    <?php endif; ?>
+
   </main>
 
   

@@ -1,26 +1,14 @@
 let membershipItems = [];
 let instantItems = [];
 
-const getApiBaseUrl = () => {
-    const loc = window.location;
-    if (loc.hostname === 'localhost' || loc.hostname === '127.0.0.1') {
-        if (loc.pathname.includes('/akazastore/')) {
-            return '/akazastore/public/api';
-        }
-        return '/public/api';
-    }
-    return '/api';
-};
-const apiBase = getApiBaseUrl();
-
 const urlParams = new URLSearchParams(window.location.search);
-const gameId = urlParams.get('id');
+const gameId = window.gameId || urlParams.get('id');
 
 async function fetchProducts() {
     if (!gameId) return;
     
     try {
-        const response = await fetch(`${apiBase}/games`);
+        const response = await fetch(`http://localhost/akazastore/public/api/games`);
         const result = await response.json();
         
         if (result.status === 'success') {
@@ -161,7 +149,7 @@ function selectItem(card, item) {
 
 async function fetchPayments() {
     try {
-        const response = await fetch(`${apiBase}/payments`);
+        const response = await fetch(`http://localhost/akazastore/public/api/payments`);
         const result = await response.json();
         
         if (result.status === 'success') {

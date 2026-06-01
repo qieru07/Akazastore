@@ -13,11 +13,8 @@
 
         <!-- Scripts -->
         <script>
-            if (localStorage.getItem('akaza_theme') === 'dark' || (!('akaza_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark')
-            } else {
-                document.documentElement.classList.remove('dark')
-            }
+            // Admin Dashboard selalu menggunakan tema gelap/biru premium secara permanen
+            document.documentElement.classList.add('dark');
         </script>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>

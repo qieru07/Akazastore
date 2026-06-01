@@ -15,10 +15,22 @@ class GameApiController extends Controller
         }])->where('status', 1)->get();
 
         $games->map(function ($game) {
-            if (str_starts_with($game->thumbnail, 'http')) {
+            // Dynamic correction for Roblox (broad match)
+            $name_lower = strtolower($game->name ?? '');
+            $slug_lower = strtolower($game->slug ?? '');
+            if (strpos($name_lower, 'roblox') !== false || strpos($slug_lower, 'roblox') !== false || $slug_lower === 'rb') {
+                $game->thumbnail = 'Roblox.png';
+                try {
+                    $game->save();
+                } catch (\Exception $e) {
+                    // Suppress database write issues in serverless read-only setups
+                }
+            }
+
+            if (str_starts_with($game->thumbnail ?? '', 'http')) {
                 $game->thumbnail_url = $game->thumbnail;
             } else {
-                $game->thumbnail_url = url('images/games/' . $game->thumbnail);
+                $game->thumbnail_url = url('images/games/' . ($game->thumbnail ?? ''));
             }
             $game->video_url = $game->video ? url('videos/games/' . $game->video) : null;
             $game->slug = $game->slug ?? 'item'; // Fallback ke item.php jika slug kosong

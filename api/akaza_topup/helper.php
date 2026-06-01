@@ -24,11 +24,9 @@ if (!function_exists('get_image_base_url')) {
         $uri = $_SERVER['REQUEST_URI'] ?? '';
         
         // Cek jika berada di localhost (XAMPP)
+        // Gambar selalu disimpan oleh admin Laravel ke akazastore/public/images
         if (strpos($host, 'localhost') !== false || strpos($host, '127.0.0.1') !== false) {
-            if (strpos($uri, '/akazastore/') !== false) {
-                return "http://" . $host . "/akazastore/public/images";
-            }
-            return "http://" . $host . "/public/images";
+            return "http://" . $host . "/akazastore/public/images";
         }
         
         // Di Vercel (Production)
@@ -47,7 +45,7 @@ if (!function_exists('get_video_base_url')) {
             if (strpos($uri, '/akazastore/') !== false) {
                 return "http://" . $host . "/akazastore/public/videos";
             }
-            return "http://" . $host . "/public/videos";
+            return "http://" . $host . "/akaza_topup/videos";
         }
         
         // Di Vercel (Production)
@@ -69,7 +67,15 @@ if (!function_exists('get_game_details')) {
         $game_id_clean = mysqli_real_escape_string($conn, $game_id);
         $query = mysqli_query($conn, "SELECT * FROM games WHERE id='$game_id_clean' LIMIT 1");
         if ($query && $row = mysqli_fetch_assoc($query)) {
-            $thumbnail = $row['thumbnail'];
+            // Dynamic correction for Roblox (broad match)
+            $name_lower = strtolower($row['name'] ?? '');
+            $slug_lower = strtolower($row['slug'] ?? '');
+            if (strpos($name_lower, 'roblox') !== false || strpos($slug_lower, 'roblox') !== false || $slug_lower === 'rb') {
+                $row['thumbnail'] = 'Roblox.png';
+                @mysqli_query($conn, "UPDATE games SET thumbnail = 'Roblox.png' WHERE id = " . intval($row['id']));
+            }
+            
+            $thumbnail = $row['thumbnail'] ?? '';
             if (str_starts_with($thumbnail, 'http')) {
                 $game_img = $thumbnail;
             } else {

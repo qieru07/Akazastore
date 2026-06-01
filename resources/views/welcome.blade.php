@@ -9,7 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-        if (localStorage.getItem('akaza_theme') === 'dark' || (!('akaza_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        if (localStorage.getItem('akaza_theme') !== 'light') {
             document.documentElement.classList.add('dark')
         } else {
             document.documentElement.classList.remove('dark')
